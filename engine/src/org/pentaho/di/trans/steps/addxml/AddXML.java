@@ -113,7 +113,7 @@ public class AddXML extends BaseStep implements StepInterface {
       if ( !meta.isOmitNullValues() || !v.isNull( valueData ) ) {
         String value = formatField( v, valueData, outputField );
 
-        String element = outputField.getElementName();
+        String element = fieldSubstitute( outputField.getElementName(), getInputRowMeta(), r );
         if ( element == null || element.length() == 0 ) {
           element = fieldname;
         }

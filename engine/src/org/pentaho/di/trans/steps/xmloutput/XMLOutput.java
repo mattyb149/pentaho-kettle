@@ -59,7 +59,7 @@ public class XMLOutput extends BaseStep implements StepInterface {
   private XMLOutputData data;
 
   public XMLOutput( StepMeta stepMeta, StepDataInterface stepDataInterface, int copyNr, TransMeta transMeta,
-    Trans trans ) {
+                    Trans trans ) {
     super( stepMeta, stepDataInterface, copyNr, transMeta, trans );
   }
 
@@ -194,7 +194,7 @@ public class XMLOutput extends BaseStep implements StepInterface {
             ValueMetaInterface valueMeta = data.formatRowMeta.getValueMeta( data.fieldnrs[i] );
             Object valueData = r[data.fieldnrs[i]];
 
-            String elementName = outputField.getElementName();
+            String elementName = fieldSubstitute( environmentSubstitute( outputField.getElementName() ), rowMeta, r );
             if ( Const.isEmpty( elementName ) ) {
               elementName = outputField.getFieldName();
             }
