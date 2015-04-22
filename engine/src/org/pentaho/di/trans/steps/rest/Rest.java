@@ -43,6 +43,8 @@ import javax.net.ssl.X509TrustManager;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory;
+import org.apache.commons.httpclient.protocol.Protocol;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.encryption.Encr;
 import org.pentaho.di.core.exception.KettleException;
@@ -188,16 +190,18 @@ public class Rest extends BaseStep implements StepInterface {
 
       // Get Response
       String body;
+      byte[] rawBody;
       try {
-        body = response.getEntity( String.class );
+        rawBody = response.getEntity( byte[].class );
       } catch ( UniformInterfaceException ex ) {
         body = "";
+        rawBody = new byte[0];
       }
       // for output
       int returnFieldsOffset = data.inputRowMeta.size();
       // add response to output
       if ( !Const.isEmpty( data.resultFieldName ) ) {
-        newRow = RowDataUtil.addValueData( newRow, returnFieldsOffset, body );
+        newRow = RowDataUtil.addValueData( newRow, returnFieldsOffset, rawBody );
         returnFieldsOffset++;
       }
 
@@ -454,25 +458,9 @@ public class Rest extends BaseStep implements StepInterface {
 
     if ( super.init( smi, sdi ) ) {
 
-      TrustManager[] trustAllCerts = new TrustManager[]{
-        new X509TrustManager() {
-
-          public X509Certificate[] getAcceptedIssuers() {
-            return null;
-          }
-
-          public void checkClientTrusted( X509Certificate[] certs, String authType ) {
-          }
-
-          public void checkServerTrusted( X509Certificate[] certs, String authType ) {
-          }
-        }
-      };
-
       try {
-        SSLContext sslContext = SSLContext.getInstance( "SSL" );
-        sslContext.init( null, trustAllCerts, new SecureRandom() );
-        HttpsURLConnection.setDefaultSSLSocketFactory( sslContext.getSocketFactory() );
+        Protocol easyhttps = new Protocol( "https", new EasySSLProtocolSocketFactory(), 443 );
+        Protocol.registerProtocol( "https", easyhttps );
       } catch ( Exception e ) {
         e.printStackTrace();
       }

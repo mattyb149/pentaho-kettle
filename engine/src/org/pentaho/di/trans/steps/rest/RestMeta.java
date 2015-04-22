@@ -377,7 +377,7 @@ public class RestMeta extends BaseStepMeta implements StepMetaInterface {
   public void getFields( RowMetaInterface inputRowMeta, String name, RowMetaInterface[] info, StepMeta nextStep,
     VariableSpace space, Repository repository, IMetaStore metaStore ) throws KettleStepException {
     if ( !Const.isEmpty( fieldName ) ) {
-      ValueMetaInterface v = new ValueMeta( space.environmentSubstitute( fieldName ), ValueMeta.TYPE_STRING );
+      ValueMetaInterface v = new ValueMeta( space.environmentSubstitute( fieldName ), ValueMeta.TYPE_BINARY );
       v.setOrigin( name );
       inputRowMeta.addValueMeta( v );
     }
